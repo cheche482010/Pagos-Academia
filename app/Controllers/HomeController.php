@@ -4,8 +4,8 @@ namespace App\Controllers;
 
 class HomeController extends BaseController
 {
-    public function index()
-    {
-       echo "string";
-    }
+   public function index()
+   {
+      require __DIR__ . "/../Views/home/home.php";
+   }
 }

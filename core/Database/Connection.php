@@ -16,7 +16,7 @@ class Connection
         $this->credentials = [
             'Servidor'   => 'mysql',
             'Host'       => 'localhost',
-            'Base_Datos' => 'sethar',
+            'Base_Datos' => 'academia',
             'Puerto'     => '3306',
             'Usuario'    => 'root',
             'Contraseña' => 'root',

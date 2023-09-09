@@ -21,6 +21,6 @@ class ButtonComponent extends Component
         $style = $this->style ?? '';
 
         echo '<button style="' . $style . '">' . $text . '</button>';
-    }
+    } 
 }
 
