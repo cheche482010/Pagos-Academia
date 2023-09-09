@@ -2,31 +2,12 @@
 namespace App\Controllers;
 
 use Core\BaseModel;
-use App\Components\ButtonComponent;
-use App\Components\LinkComponent;
-use App\Components\ScriptComponent;
-use App\Components\PageHeaderComponent;
-use App\Components\NotificationsComponent;
-use App\Components\NavbarNavComponent;
-use App\Components\SidebarMenuComponent;
-use App\Components\FooterComponent;
-use App\Components\SmallBoxComponent;
-use App\Components\ContentHeaderComponent;
 
 class BaseController
 {
     protected $model;
-    protected $button;
-    protected $link;
     protected $assets;
-    protected $script;
-    protected $pageheader;
-    protected $notifications;
-    protected $navbarnav;
-    protected $sidebar;
-    protected $footer;
-    protected $smallbox;
-    protected $contentheader;
+    protected $components = [];
 
     public function __construct()
     {
@@ -36,64 +17,27 @@ class BaseController
         $this->assets = $this->Assets();
     }
 
-    protected function Button($data = [])
+    protected function createComponent($className, $data = [])
     {
-        $this->button = new ButtonComponent($data);
-        return $this->button;
-    } 
+        if (!class_exists($className)) {
+            throw new \Exception("Class $className not found.");
+        }
 
-    protected function Link($data = [])
-    {
-        $this->link = new LinkComponent($data);
-        return $this->link;
-    } 
+        $component = new $className($data);
+        $this->components[] = $component;
 
-    protected function Script($data = [])
-    {
-        $this->script = new ScriptComponent($data);
-        return $this->script;
-    } 
-
-    protected function PageHeader($data = [])
-    {
-        $this->pageheader = new PageHeaderComponent($data);
-        return $this->pageheader;
-    } 
-
-    protected function Notifications($data = [])
-    {
-        $this->notifications = new NotificationsComponent($data);
-        return $this->notifications;
+        return $component;
     }
 
-    protected function NavbarNav($data = [])
+    public function __call($method, $args)
     {
-        $this->navbarnav = new NavbarNavComponent($data);
-        return $this->navbarnav;
-    }
+        $componentName = ucfirst($method) . 'Component';
+        $componentClass = "App\\Components\\$componentName";
 
-    protected function SidebarMenu($data = [])
-    {
-        $this->sidebar = new SidebarMenuComponent($data);
-        return $this->sidebar;
-    }
-
-    protected function Footer($data = [])
-    {
-        $this->footer = new FooterComponent($data);
-        return $this->footer;
-    }
-
-    protected function SmallBox($data = [])
-    {
-        $this->smallbox = new SmallBoxComponent($data);
-        return $this->smallbox;
-    }
-
-    protected function ContentHeader($data = [])
-    {
-        $this->contentheader = new ContentHeaderComponent($data);
-        return $this->contentheader;
+        if (class_exists($componentClass)) {
+            return $this->createComponent($componentClass, ...$args);
+        }
+        throw new \Exception("Method $method not found.");
     }
 
     public function Assets()
@@ -101,7 +45,7 @@ class BaseController
         $protocol = empty($_SERVER['HTTPS']) ? 'http://' : 'https://';
         $domain   = $_SERVER['HTTP_HOST'];
         $root     = str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) . "/";
-        return $protocol . $domain . $root."assets/";
+        return $protocol . $domain . $root . "assets/";
         unset($protocol, $domain, $root);
     }
 }
