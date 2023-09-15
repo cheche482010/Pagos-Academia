@@ -5,7 +5,7 @@ namespace App\Components;
 class Component
 {
     protected $data = [];
-
+ 
     public function __construct(array $data = [])
     {
         $this->data = $data;
